@@ -1,0 +1,44 @@
+# Instrukcja zaliczeniowa
+
+## Elementy początkowe
+
+1. Deklarujemy 2-bitową głębię bitową obrazu `depth`.
+2. Określamy zakres sensora `drange` na `(-1, 1)`.
+3. Deklarujemy rozdzielczość obrazu `resolution` na `256`.
+4. Deklarujemy liczbę iteracji procedury akwizycji `n_iter` na `256`.
+5. Wyliczamy górny limit zakresu dyskretnego `N` na 2 do potęgi głębi bitowej, pomniejszone o jeden.
+6. Budujemy przestrzeń liniową `prober` z zakresu od 0 do ośmiu Pi o `resolution` elementach.
+7. Próbkujemy tą przestrzenią funkcję sinus, zapisując wynik próbkowania w wektorze `prober`.
+8. Budujemy macierz `perfect_image` jako iloczyn dwóch wektorów `prober`.
+9. Inicjalizujemy macierze `n_matrix` i `o_matrix`, jako struktury dwuwymiarowe o kształcie macierzy `perfect_image`, składające się z samych zer.
+
+## Pętla akwizycji
+
+Poniższy kod wykonujemy w pętli `n_iter` razy.
+
+1. Generujemy szum `noise` z rozkładu normalnego o wartości oczekiwanej funkcji sinus i odchyleniu standardowym równym jej maksymalnemu wychyleniu od wartości zero, próbkując go jako strukturę o kształcie macierzy `perfect_image`.
+2. W zmiennej `n_image` przechowujemy sumę macierzy `perfect_image` i `noise`.
+3. W zmiennej `o_image` przechowujemy kopię macierzy `perfect_image`.
+4. Macierze `n_image` i `o_image`, niezależnie, poddajemy kwantyzacji do zadanej przez `depth` głębi bitowej, a wyniki tej operacji zapisujemy w zmiennych `n_dimg` u `o_dimg`.
+* **Proszę pamiętać o normalizacji przedziałowej sygnału do zakresu `drange` i obowiązkowym przycięciu osiągniętych wartości w punktach 0 i 1.**
+
+5. Do macierzy `n_matrix` dodajemy obraz cyfrowy `n_dimg`, a do macierzy `o_matrix`, obraz cyfrowy `o_dimg`.
+6. Na koniec każdej pętli itreracji akwizycji zapisujemy do pliku graficznego wizualizację o opisanej niżej charakterystyce.
+
+## Charakterystyka wizualizacji
+
+- Plot o wymiarach 12x8 cala o trzech kolumnach i dwóch wierszach.
+- Pierwsza kolumna:
+	- pierwszy wiersz - obraz `perfect_image`,
+	- drugi wiersz - obraz szumu,
+- Druga kolumna:
+	- pierwszy wiersz - aktualny obraz cyfrowy `o_dimg`,
+	- drugi wiersz - aktualny obraz cyfrowy `n_dimg`,
+- Trzecia kolumna:
+	- pierwszy wiersz - wynikowy dla akwizycji obraz `o_matrix`,
+	- drugi wiersz - wynikowy dla akwizycji obraz `n_matrix`,
+
+
+## Podsumowanie
+
+Końcowy skrypt z rozwiązaniem proszę opatrzyć komentarzem, w którym wyjaśniają Państwo przyczynę różnic pomiędzy wynikowymi obrazami akwizycji z kolumny trzeciej.

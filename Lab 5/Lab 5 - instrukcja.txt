@@ -1,0 +1,163 @@
+# Przekształcenia afiniczne
+## Zadanie 1
+### Przygotowanie reprezentacji
+
+1. Przygotujmy macierz `points` z lokalizacjami punktów okalających kwadrat:
+```python
+[
+	[0,0],
+	[1,0],
+	[1,1],
+	[0,1],
+	[0,0]
+]
+```
+2. Przygotujmy wektor `ones` o długości takiej samej, jak liczba wierszy w `points`, składający się z samych jedynek.
+3. Poddajmy konkatenacji macierz `points` i wektor `ones`, traktując `ones` jako dodatkową, trzecią kolumnę `points` i zapisujemy wynik w macierzy `A`.
+
+
+### Przygotowanie transformacji
+
+Proszę przygotować, w formie słownika, dziewięć macierzy transformacji afinicznej `T`:
+
+1. Jednokładność:
+```python
+[
+	[1,0,0],
+	[0,1,0],
+	[0,0,1],
+]
+```
+
+2. Translacja x-y:
+```python
+[
+	[1,0, .5],
+	[0,1, .5],
+	[0,0,1  ]
+]
+```
+
+3. Odbicie x:
+```python
+[
+	[-1,0,0],
+	[ 0,1,0],
+	[ 0,0,1]
+]
+```
+
+4. Odbicie y:
+```python
+[
+	[1, 0,0],
+	[0,-1,0],
+	[0, 0,1]
+]
+```
+
+5. Skalowanie x:
+```python
+[
+	[2,0,0],
+	[0,1,0],
+	[0,0,1]
+]
+```
+
+6. Skalowanie y:
+```python
+[
+	[1,0,0],
+	[0,2,0],
+	[0,0,1]
+]
+```
+
+7. Obrót o wybrany kąt theta:
+```python
+[
+	[cos(theta), -sin(theta),0],
+	[sin(theta),  cos(theta),0],
+	[0         ,0           ,1]
+]
+```
+
+8. Pochylenie x
+```python
+[
+	[1, .5,0],
+	[0,1  ,0],
+	[0,0  ,1]
+]
+```
+
+9. Pochylenie y
+```python
+[
+	[1, .5,0],
+	[0,1  ,0],
+	[0,0  ,1]
+]
+```
+
+### Realizacja transformacji
+
+- Przy transformacji afinicznej musimy dysponować transformowanymi punktami w przestrzeni (w naszym wypadku pięć punktów `a` zebranych w `A`) i macierzą transformacji `T`.
+- Realizacja transformacji afinicznej dla pojedynczego punktu `a` realizowana jest przez jego mnożenie macierzowe z macierzą transformacji: `z = a @ T`.
+- Aby zrealizować transformację dla wielu punktów jednocześnie, poprawnie dopasowując wymiary macierzy, powinniśmy przemnożyć macierzowo zbiór punktów z przetransponowaną macierzą transformacji (`Z = A @ T.T`).
+
+
+### Efekt zadania
+
+W efekcie Zadania 1 proszę z wykorzystaniem posiadanej wiedzy proszę odtworzyć poniższą ilustrację, tj.:
+
+1. Przygotować plot o siatce 3x3.
+2. W każdym z subplotów, podpisanych nazwą transformacji:
+	- wyrysować wykres punktowy przed (kolor 'tomato') i po transformacji (kolor 'dodgerblue'),
+	- funkcją plot połączyć punkty zgodnie z ich sekwencją.
+
+![effect_1](https://user-images.githubusercontent.com/904399/140101285-ce604438-29c7-45d9-bc8c-75cad2d6e186.png)
+
+## Zadanie 2
+
+### Efekt zadania
+
+W efekcie Zadania 2 należy odtworzyć poniższą wizualizację, w której poszczególnych komórkach należy:
+
+1. Przez `imshow` wyświetlić originalny obraz w palecie `Blues_r`.
+2. Przez `scatter` piksele oryginalnego obrazu w palecie `Blues_r` zgodnie z ich originalnymi lokalizacjami.
+3. Przez `scatter` piksele oryginalnego obrazu w palecie `Blues_r` zgodnie z ich originalnymi lokalizacjami i przez `scatter` piksele oryginalnego obrazu w palecie `Reds_r` zgodnie z ich przetransformowanymi lokalizacjami.
+4. Przez `imshow` ponownie spróbkowany obraz po transpozycji w palecie `Reds_r`.
+
+![effect_2](https://user-images.githubusercontent.com/904399/140101254-c1858c9f-9c25-4737-8c48-21213354f42f.png)
+
+
+### Kroki zadania
+
+1. Proszę wczytać obraz `chelsea`, uzyskując jego formę monochromatyczną przez uśrednienie kanałów barwnych i rzutowanie na typ `uint8`.
+2. Proszę zmniejszyć jego rozdzielczość przed zaadresowanie co dziesiątego piksela (`image[::skip, ::skip]`) (*pierwszy rząd wizualizacji*).
+3. Proszę do zmiennej `source_values` odłożyć wektor wszystkich kolejnych wartości obrazu (`np.reshape(-1)`).
+4. Proszę do zmiennej `aspect` zapisać proporcję obrazu (stosunek jego wysokości do szerokości).
+5. Proszę przygotować przestrzenie źródłowe dla wysokości i szerokości obrazu:
+	- `x_source_space` - przestrzeń liniowa z zakresu `0`-`1` próbkowana w liczbie kolumn obrazu po redukcji rozdzielczości,
+	- `y_source_space` - przestrzeń liniowa z zakresu `0`-`aspect` próbkowana w liczbie wierszy obrazu po redukcji rozdzielczości.
+6. Proszę przygotować macierz lokalizacji punktów `A`, analogicznie do procedury z Zadania 1 (`np.meshgrid()`, `np.concatenate()`) (*niebieskie elementy w drugim i trzecim rzędzie wizualizacji*).
+7. Proszę przygotować macierz transformacji `T` realizującej obrót o 45 stopni.
+8. Proszę przetransformować macierz `A` transformacją `T` analogicznie do procedury z Zadania 1 i zapisać jej wynik w macierzy `Z` (*czerwone elementy w trzecim rzędzie wizualizacji*).
+9. Obraz po transformacji wymaga ponownego próbkowania. Aby to osiągnąć, należy w pierwszej kolejności przygotować punkty próbkowania. Dla uproszczenia pracy mogą skorzystać Państwo z poniższego kodu, próbkującego w rozdzielczości `512x512px` przestrzeń zamkniętą przez skrajne wartości lokalizacji przetransformowanych punktów macierzy `Z`.
+```python
+XX, YY = np.mgrid[np.min(Z[:,0]):np.max(Z[:,0]):512j,
+                  np.min(Z[:,1]):np.max(Z[:,1]):512j]
+```
+10. W następnym kroku należy zrealizować interpolację dwuwymiarową, dla wygody wykorzystując funkcję `scipy.interpolate.griddata()`. Przyjmuje ona, kolejno:
+ 	- lokalizacje punktów po transformacji (dwie pierwsze kolumny macierzy `Z`),
+	- wartości tych punktów (originalne wartości składowane w zmiennej `source_values`),
+	- krotkę siatki mgrid dla kolejnych wymiarów (`(XX, YY)`),
+	- ponadto warto określić metodę interpolacji (`method`) i wartość domyślną ekstrapolacji (`fill_value`).
+11. Gotowe!
+
+
+## Zadanie na ocenę 5
+
+Na ocenę bardzo dobrą należy, z wykorzystaniem pakietu imagemagick i klatek renderowanych przez matplotlib przygotować animację przejścia wybranego obrazu przez trzy losowe transformacje afiniczne, kroki przejściowe interpolując liniowo.
